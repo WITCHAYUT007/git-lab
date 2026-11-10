@@ -51,6 +51,19 @@ def _solve_nodal(vcc, r1, r2, rc, re, beta, vbe):
     }
 
 
+def _worst_residual(vcc, r1, r2, rc, re, beta, vbe, values):
+    """Worst KCL/model residual of a solved point, in amps or volts."""
+    residuals = (
+        (values["vb_v"] - vcc) / r1 + values["vb_v"] / r2 + values["ib_a"],
+        (values["vc_v"] - vcc) / rc + values["ic_a"],
+        values["ie_a"] * re - values["ve_v"],
+        values["vb_v"] - values["ve_v"] - vbe,
+        values["ic_a"] - beta * values["ib_a"],
+        values["ie_a"] - (beta + 1) * values["ib_a"],
+    )
+    return max(abs(value) for value in residuals)
+
+
 def analyze_ce_bias(vcc, r1, r2, rc, re, beta, vbe):
     inputs = {
         "vcc": vcc,
@@ -99,7 +112,11 @@ def analyze_ce_bias(vcc, r1, r2, rc, re, beta, vbe):
         "vce_v": vce,
     }
     nodal = _solve_nodal(vcc, r1, r2, rc, re, beta, vbe)
-    check_delta = max(abs(nodal[k] - thevenin[k]) for k in RESULT_FIELDS)
+    residual = _worst_residual(vcc, r1, r2, rc, re, beta, vbe, thevenin)
+    check_delta = max(
+        max(abs(nodal[k] - thevenin[k]) for k in RESULT_FIELDS),
+        residual,
+    )
     scale = max(abs(thevenin[k]) for k in RESULT_FIELDS)
     check_passed = check_delta <= 1e-6 * max(1.0, scale)
 

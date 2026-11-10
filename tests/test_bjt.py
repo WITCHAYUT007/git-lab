@@ -1,6 +1,6 @@
 import unittest
 
-from bjt import _solve_nodal, analyze_ce_bias
+from bjt import _solve_nodal, _worst_residual, analyze_ce_bias
 
 REF1 = dict(vcc=12, r1=47000, r2=10000, rc=4700, re=1000, beta=150, vbe=0.7)
 REF2 = dict(vcc=15, r1=33000, r2=6800, rc=2200, re=470, beta=200, vbe=0.65)
@@ -74,6 +74,38 @@ class TestIndependentCheck(unittest.TestCase):
         r = analyze_ce_bias(**REF1)
         self.assertTrue(r.check_passed)
         self.assertLess(r.check_delta, 1e-9)
+
+    def test_residual_detects_perturbed_point(self):
+        r = analyze_ce_bias(**REF1)
+        point = {
+            "ib_a": r.ib_a,
+            "ic_a": r.ic_a,
+            "ie_a": r.ie_a,
+            "vb_v": r.vb_v,
+            "vc_v": r.vc_v + 0.1,
+            "ve_v": r.ve_v,
+            "vce_v": r.vce_v,
+        }
+        residual = _worst_residual(
+            12, 47000, 10000, 4700, 1000, 150, 0.7, point
+        )
+        self.assertGreater(residual, 1e-6)
+
+    def test_reference_residual_is_zero(self):
+        r = analyze_ce_bias(**REF1)
+        point = {
+            "ib_a": r.ib_a,
+            "ic_a": r.ic_a,
+            "ie_a": r.ie_a,
+            "vb_v": r.vb_v,
+            "vc_v": r.vc_v,
+            "ve_v": r.ve_v,
+            "vce_v": r.vce_v,
+        }
+        residual = _worst_residual(
+            12, 47000, 10000, 4700, 1000, 150, 0.7, point
+        )
+        self.assertLess(residual, 1e-9)
 
 
 import math
