@@ -1,0 +1,169 @@
+:root {
+  color-scheme: light;
+  --ink: #1f2933;
+  --muted: #616e7c;
+  --line: #d9e2ec;
+  --accent: #2563eb;
+  --ok: #0f7b3f;
+  --bad: #b42318;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 2rem 1rem;
+  background: #f5f7fa;
+  color: var(--ink);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+}
+
+h2 {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+}
+
+.note {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.unit {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+input {
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: inherit;
+}
+
+input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+button {
+  margin-top: 1rem;
+  padding: 0.55rem 1.1rem;
+  border: 0;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(1.08);
+}
+
+.error {
+  margin-top: 1rem;
+  padding: 0.6rem 0.75rem;
+  border-left: 4px solid var(--bad);
+  background: #fdf0ee;
+  color: var(--bad);
+}
+
+.results {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.badge {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
+.region-active {
+  background: var(--ok);
+}
+
+.region-cutoff {
+  background: #8a5a00;
+}
+
+.region-saturation {
+  background: var(--bad);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+th {
+  width: 30%;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.check {
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.check.ok {
+  color: var(--ok);
+}
+
+.check.bad {
+  color: var(--bad);
+}
+
+.warnings {
+  margin: 1rem 0 0;
+  padding: 0.6rem 0.9rem 0.6rem 1.6rem;
+  border-left: 4px solid #8a5a00;
+  background: #fff8e6;
+  color: #6b4600;
+}
