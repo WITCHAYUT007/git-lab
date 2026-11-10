@@ -76,5 +76,46 @@ class TestIndependentCheck(unittest.TestCase):
         self.assertLess(r.check_delta, 1e-9)
 
 
+import math
+
+
+class TestRegions(unittest.TestCase):
+    def test_cutoff_clamps_currents(self):
+        r = analyze_ce_bias(12, 100000, 1000, 4700, 1000, 100, 0.7)
+        self.assertEqual(r.region, "cutoff")
+        self.assertEqual((r.ib_a, r.ic_a, r.ie_a), (0.0, 0.0, 0.0))
+        self.assertAlmostEqual(r.ve_v, 0.0)
+        self.assertAlmostEqual(r.vb_v, 0.118811881, delta=1e-9)
+        self.assertAlmostEqual(r.vc_v, 12.0)
+        self.assertAlmostEqual(r.vce_v, 12.0)
+        self.assertEqual(len(r.warnings), 1)
+        self.assertTrue(r.check_passed)
+
+    def test_cutoff_boundary_is_inclusive(self):
+        r = analyze_ce_bias(1.4, 10000, 10000, 1000, 100, 100, 0.7)
+        self.assertEqual(r.region, "cutoff")
+        self.assertEqual(r.ic_a, 0.0)
+        for value in (r.ib_a, r.ie_a, r.vb_v, r.vc_v, r.ve_v, r.vce_v):
+            self.assertTrue(math.isfinite(value))
+
+    def test_saturation_reports_raw_values(self):
+        r = analyze_ce_bias(12, 10000, 10000, 200, 100, 150, 0.7)
+        self.assertEqual(r.region, "saturation")
+        self.assertAlmostEqual(r.vce_v, 0.107960199, delta=1e-6)
+        self.assertEqual(len(r.warnings), 1)
+        self.assertTrue(r.check_passed)
+
+    def test_saturation_boundary(self):
+        active = analyze_ce_bias(12, 10000, 10000, 197, 100, 150, 0.7)
+        saturated = analyze_ce_bias(12, 10000, 10000, 198, 100, 150, 0.7)
+        self.assertEqual(active.region, "active")
+        self.assertEqual(saturated.region, "saturation")
+
+    def test_extreme_valid_values_stay_finite(self):
+        r = analyze_ce_bias(12, 1, 1, 1, 1, 1, 0.5)
+        for value in (r.ib_a, r.ic_a, r.ie_a, r.vb_v, r.vc_v, r.ve_v, r.vce_v):
+            self.assertTrue(math.isfinite(value))
+
+
 if __name__ == "__main__":
     unittest.main()

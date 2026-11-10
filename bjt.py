@@ -103,6 +103,32 @@ def analyze_ce_bias(vcc, r1, r2, rc, re, beta, vbe):
     scale = max(abs(thevenin[k]) for k in RESULT_FIELDS)
     check_passed = check_delta <= 1e-6 * max(1.0, scale)
 
+    if vbb <= vbe:
+        return BiasResult(
+            ib_a=0.0,
+            ic_a=0.0,
+            ie_a=0.0,
+            vb_v=vbb,
+            vc_v=vcc,
+            ve_v=0.0,
+            vce_v=vcc,
+            region="cutoff",
+            warnings=(
+                "Transistor is cut off; linear active-region model does not apply.",
+            ),
+            check_passed=check_passed,
+            check_delta=check_delta,
+        )
+
+    if vce <= 0.2:
+        region = "saturation"
+        warnings = (
+            "Predicted VCE is below VCE(sat); transistor saturates and the model is not valid.",
+        )
+    else:
+        region = "active"
+        warnings = ()
+
     return BiasResult(
         ib_a=ib,
         ic_a=ic,
@@ -111,8 +137,8 @@ def analyze_ce_bias(vcc, r1, r2, rc, re, beta, vbe):
         vc_v=vc,
         ve_v=ve,
         vce_v=vce,
-        region="active",
-        warnings=(),
+        region=region,
+        warnings=warnings,
         check_passed=check_passed,
         check_delta=check_delta,
     )
