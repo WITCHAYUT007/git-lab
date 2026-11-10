@@ -17,6 +17,13 @@ class TestPages(unittest.TestCase):
             self.assertIn(field, resp.data)
         self.assertIn(b"47000", resp.data)
 
+    def test_get_renders_circuit_diagram(self):
+        resp = self.client.get("/")
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b'class="schematic"', resp.data)
+        self.assertIn(b'aria-labelledby="schematic-title"', resp.data)
+        self.assertIn(b">Q1</text>", resp.data)
+
     def test_post_reference_vector(self):
         resp = self.client.post("/", data=REF1)
         self.assertEqual(resp.status_code, 200)

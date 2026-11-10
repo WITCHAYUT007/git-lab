@@ -45,6 +45,55 @@ h2 {
   font-size: 0.9rem;
 }
 
+.schematic {
+  margin: 0 0 1.5rem;
+}
+
+.schematic svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.schematic line,
+.schematic rect,
+.schematic circle,
+.schematic polygon {
+  stroke: var(--ink);
+  stroke-width: 2;
+  fill: none;
+}
+
+.schematic rect.box {
+  fill: #ffffff;
+}
+
+.schematic circle.dot {
+  fill: var(--ink);
+  stroke: none;
+}
+
+.schematic polygon.arrow {
+  fill: var(--ink);
+}
+
+.schematic text {
+  fill: var(--ink);
+  font: 13px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.schematic text.sub {
+  fill: var(--muted);
+  font-size: 12px;
+}
+
+.schematic figcaption {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 .fields {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
