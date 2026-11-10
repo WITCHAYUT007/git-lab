@@ -1,6 +1,6 @@
 import unittest
 
-from bjt import analyze_ce_bias
+from bjt import _solve_nodal, analyze_ce_bias
 
 REF1 = dict(vcc=12, r1=47000, r2=10000, rc=4700, re=1000, beta=150, vbe=0.7)
 REF2 = dict(vcc=15, r1=33000, r2=6800, rc=2200, re=470, beta=200, vbe=0.65)
@@ -59,6 +59,21 @@ class TestValidation(unittest.TestCase):
             with self.subTest(vbe=vbe):
                 with self.assertRaisesRegex(ValueError, "VBE"):
                     analyze_ce_bias(**dict(REF1, vbe=vbe))
+
+
+class TestIndependentCheck(unittest.TestCase):
+    def test_nodal_matches_displayed_point(self):
+        for ref in (REF1, REF2):
+            with self.subTest(ref=ref):
+                r = analyze_ce_bias(**ref)
+                n = _solve_nodal(**ref)
+                self.assertAlmostEqual(n["ic_a"], r.ic_a, delta=1e-9)
+                self.assertAlmostEqual(n["vce_v"], r.vce_v, delta=1e-9)
+
+    def test_check_fields_are_computed(self):
+        r = analyze_ce_bias(**REF1)
+        self.assertTrue(r.check_passed)
+        self.assertLess(r.check_delta, 1e-9)
 
 
 if __name__ == "__main__":

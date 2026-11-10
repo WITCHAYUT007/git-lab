@@ -11,6 +11,8 @@ LABELS = {
     "vbe": "VBE",
 }
 
+RESULT_FIELDS = ("ib_a", "ic_a", "ie_a", "vb_v", "vc_v", "ve_v", "vce_v")
+
 
 @dataclass(frozen=True)
 class BiasResult:
@@ -25,6 +27,28 @@ class BiasResult:
     warnings: tuple[str, ...]
     check_passed: bool
     check_delta: float
+
+
+def _solve_nodal(vcc, r1, r2, rc, re, beta, vbe):
+    """Solve the same DC point by nodal analysis, without Thevenin reduction."""
+    a11 = 1 / r1 + 1 / r2 + 1 / ((beta + 1) * re)
+    b1 = vcc / r1 + vbe / ((beta + 1) * re)
+    vb = b1 / a11
+    ib = (vb - vbe) / ((beta + 1) * re)
+    ic = beta * ib
+    ie = (beta + 1) * ib
+    ve = ie * re
+    vc = vcc - ic * rc
+    vce = vc - ve
+    return {
+        "ib_a": ib,
+        "ic_a": ic,
+        "ie_a": ie,
+        "vb_v": vb,
+        "vc_v": vc,
+        "ve_v": ve,
+        "vce_v": vce,
+    }
 
 
 def analyze_ce_bias(vcc, r1, r2, rc, re, beta, vbe):
@@ -65,6 +89,20 @@ def analyze_ce_bias(vcc, r1, r2, rc, re, beta, vbe):
     vb = vbe + ve
     vce = vc - ve
 
+    thevenin = {
+        "ib_a": ib,
+        "ic_a": ic,
+        "ie_a": ie,
+        "vb_v": vb,
+        "vc_v": vc,
+        "ve_v": ve,
+        "vce_v": vce,
+    }
+    nodal = _solve_nodal(vcc, r1, r2, rc, re, beta, vbe)
+    check_delta = max(abs(nodal[k] - thevenin[k]) for k in RESULT_FIELDS)
+    scale = max(abs(thevenin[k]) for k in RESULT_FIELDS)
+    check_passed = check_delta <= 1e-6 * max(1.0, scale)
+
     return BiasResult(
         ib_a=ib,
         ic_a=ic,
@@ -75,6 +113,6 @@ def analyze_ce_bias(vcc, r1, r2, rc, re, beta, vbe):
         vce_v=vce,
         region="active",
         warnings=(),
-        check_passed=True,
-        check_delta=0.0,
+        check_passed=check_passed,
+        check_delta=check_delta,
     )
