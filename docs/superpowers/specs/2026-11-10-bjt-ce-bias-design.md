@@ -132,6 +132,7 @@ templates/index.html      input form, results, warnings
 static/style.css          styling
 tests/test_bjt.py         engineering logic and reference vectors
 tests/test_app.py         routes, validation, rendering
+tests/__init__.py         empty, so unittest discovery sees the tests package
 requirements.txt          Flask
 README.md                 setup, run, test, reference example
 ```
