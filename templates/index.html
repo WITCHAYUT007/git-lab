@@ -1,118 +1,204 @@
 {% extends "base.html" %}
 
 {% block content %}
-<header>
-  <h1>BJT Common-Emitter DC Bias</h1>
-  <p class="note">
-    DC, linear active-region model. Cutoff and saturation are flagged,
-    not simulated.
-  </p>
+<header class="app-header">
+  <div class="header-main">
+    <h1>Lab 03: BJT DC Bias Web App</h1>
+    <p class="subtitle">Common Emitter · {{ mode_label }}</p>
+  </div>
+  <div class="header-meta">
+    <strong>ENG29 2121</strong>
+    <span>Computer Programming for Electrical Engineers</span>
+  </div>
 </header>
 
-<figure class="schematic">
-  <svg viewBox="0 0 560 300" role="img" aria-labelledby="schematic-title">
-    <title id="schematic-title">Common-emitter voltage-divider bias circuit</title>
-
-    <text x="88" y="28" class="lbl">VCC</text>
-    <line x1="110" y1="40" x2="430" y2="40"/>
-    <line x1="110" y1="40" x2="110" y2="62"/>
-    <line x1="430" y1="40" x2="430" y2="62"/>
-
-    <rect x="100" y="62" width="20" height="46" rx="2" class="box"/>
-    <line x1="110" y1="108" x2="110" y2="150"/>
-    <text x="128" y="90" class="lbl">R1</text>
-
-    <line x1="110" y1="150" x2="110" y2="176"/>
-    <rect x="100" y="176" width="20" height="46" rx="2" class="box"/>
-    <line x1="110" y1="222" x2="110" y2="262"/>
-    <text x="128" y="204" class="lbl">R2</text>
-    <line x1="94" y1="262" x2="126" y2="262"/>
-    <line x1="100" y1="268" x2="120" y2="268"/>
-    <line x1="105" y1="274" x2="115" y2="274"/>
-
-    <circle cx="110" cy="150" r="3.5" class="dot"/>
-    <line x1="110" y1="150" x2="294" y2="150"/>
-    <text x="64" y="146" class="lbl">VB</text>
-
-    <circle cx="312" cy="150" r="30" class="device"/>
-    <line x1="296" y1="132" x2="296" y2="168"/>
-    <line x1="296" y1="140" x2="330" y2="120"/>
-    <line x1="296" y1="160" x2="330" y2="180"/>
-    <polygon points="330,180 317,178 322,170" class="arrow"/>
-    <text x="348" y="146" class="lbl">Q1</text>
-    <text x="348" y="164" class="lbl">β</text>
-    <text x="240" y="186" class="sub">VBE</text>
-
-    <line x1="330" y1="120" x2="430" y2="120"/>
-    <circle cx="430" cy="120" r="3.5" class="dot"/>
-    <line x1="430" y1="108" x2="430" y2="120"/>
-    <rect x="420" y="62" width="20" height="46" rx="2" class="box"/>
-    <text x="448" y="90" class="lbl">RC</text>
-    <text x="444" y="110" class="lbl">VC</text>
-
-    <line x1="330" y1="180" x2="430" y2="180"/>
-    <circle cx="430" cy="180" r="3.5" class="dot"/>
-    <line x1="430" y1="180" x2="430" y2="196"/>
-    <rect x="420" y="196" width="20" height="46" rx="2" class="box"/>
-    <line x1="430" y1="242" x2="430" y2="262"/>
-    <text x="448" y="224" class="lbl">RE</text>
-    <text x="444" y="172" class="lbl">VE</text>
-    <line x1="414" y1="262" x2="446" y2="262"/>
-    <line x1="420" y1="268" x2="440" y2="268"/>
-    <line x1="425" y1="274" x2="435" y2="274"/>
-  </svg>
-  <figcaption>Voltage-divider bias, common-emitter stage.</figcaption>
-</figure>
-
-<form method="post" action="/">
-  <div class="fields">
-    {% for name, label, unit in fields %}
-    <label for="{{ name }}">
-      {{ label }}{% if unit %} <span class="unit">({{ unit }})</span>{% endif %}
-      <input type="number" step="any" required id="{{ name }}" name="{{ name }}"
-             value="{{ form[name] }}">
-    </label>
+<form method="post" action="/" class="mode-bar">
+  <label for="mode">Bias circuit</label>
+  <select id="mode" name="mode">
+    {% for key, label in modes %}
+    <option value="{{ key }}"{% if key == mode %} selected{% endif %}>{{ label }}</option>
     {% endfor %}
-  </div>
-  <button type="submit">Calculate</button>
+  </select>
+  <button type="submit" name="action" value="mode">Apply mode</button>
 </form>
 
-{% if error %}
-<p class="error">{{ error }}</p>
-{% endif %}
+<div class="grid">
+  <!-- ================= INPUT PARAMETERS ================= -->
+  <section class="card inputs-card">
+    <h2>Input Parameters</h2>
 
-{% if result %}
-<section class="results">
-  <h2>
-    Operating point
-    <span class="badge region-{{ result.region }}">{{ result.region|upper }}</span>
-  </h2>
+    <form method="post" action="/" class="calc-form">
+      <input type="hidden" name="mode" value="{{ mode }}">
+      <div class="fields">
+        {% for name, label, unit, hint in fields %}
+        <label class="field" for="{{ name }}">
+          <span class="field-top">
+            <span class="field-label">{{ label }}</span>
+            {% if unit %}<span class="field-unit">{{ unit }}</span>{% endif %}
+          </span>
+          <span class="field-hint">{{ hint }}</span>
+          <input type="number" step="any" required id="{{ name }}" name="{{ name }}"
+                 value="{{ form[name] }}">
+        </label>
+        {% endfor %}
+      </div>
+      <button class="primary" type="submit" name="action" value="calculate">
+        Calculate DC Bias
+      </button>
+    </form>
 
-  <table>
-    <tbody>
-      <tr><th>IB</th><td>{{ "%.3f"|format(result.ib_a * 1e6) }} µA</td></tr>
-      <tr><th>IC</th><td>{{ "%.3f"|format(result.ic_a * 1e3) }} mA</td></tr>
-      <tr><th>IE</th><td>{{ "%.3f"|format(result.ie_a * 1e3) }} mA</td></tr>
-      <tr><th>VB</th><td>{{ "%.3f"|format(result.vb_v) }} V</td></tr>
-      <tr><th>VC</th><td>{{ "%.3f"|format(result.vc_v) }} V</td></tr>
-      <tr><th>VE</th><td>{{ "%.3f"|format(result.ve_v) }} V</td></tr>
-      <tr><th>VCE</th><td>{{ "%.3f"|format(result.vce_v) }} V</td></tr>
-    </tbody>
-  </table>
+    {% if error %}
+    <p class="error"><strong>{{ mode_label }}</strong> — {{ error }}</p>
+    {% endif %}
+  </section>
 
-  <p class="check {{ 'ok' if result.check_passed else 'bad' }}">
-    Independent check:
-    {{ "PASS" if result.check_passed else "FAIL" }}
-    (Δ = {{ "%.2e"|format(result.check_delta) }})
-  </p>
+  <!-- ================= CIRCUIT ================= -->
+  <section class="card circuit-card">
+    <h2>Circuit: Common-Emitter Amplifier</h2>
 
-  {% if result.warnings %}
-  <ul class="warnings">
-    {% for warning in result.warnings %}
-    <li>{{ warning }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %}
-</section>
-{% endif %}
+    <figure class="schematic">
+      <svg viewBox="0 0 560 330" role="img" aria-labelledby="schematic-title">
+        <title id="schematic-title">Common-emitter {{ mode_label }} bias circuit</title>
+
+        <!-- supply rail -->
+        <line class="wire" x1="70" y1="34" x2="430" y2="34"/>
+        <text class="supply" x="70" y="24">+{{ display.vcc }} V</text>
+        <circle class="rail-dot" cx="120" cy="34" r="3.5"/>
+        <circle class="rail-dot" cx="400" cy="34" r="3.5"/>
+
+        <!-- base bias network -->
+        {% if mode == "divider" %}
+        <line class="wire" x1="120" y1="34" x2="120" y2="52"/>
+        <rect class="part" x="112" y="52" width="16" height="48" rx="2"/>
+        <text class="value" x="140" y="72">{{ display.r1 }}</text>
+        <text class="ref" x="140" y="86">R1</text>
+        <line class="wire" x1="120" y1="100" x2="120" y2="150"/>
+        <circle class="node" cx="120" cy="150" r="4"/>
+        <line class="wire" x1="120" y1="150" x2="120" y2="176"/>
+        <rect class="part" x="112" y="176" width="16" height="48" rx="2"/>
+        <text class="value" x="140" y="196">{{ display.r2 }}</text>
+        <text class="ref" x="140" y="210">R2</text>
+        <line class="wire" x1="120" y1="224" x2="120" y2="262"/>
+        <line class="wire" x1="106" y1="262" x2="134" y2="262"/>
+        <line class="wire" x1="110" y1="268" x2="130" y2="268"/>
+        <line class="wire" x1="115" y1="274" x2="125" y2="274"/>
+        {% else %}
+        <line class="wire" x1="120" y1="34" x2="120" y2="66"/>
+        <rect class="part" x="112" y="66" width="16" height="68" rx="2"/>
+        <text class="value" x="140" y="92">{{ display.rb }}</text>
+        <text class="ref" x="140" y="106">RB</text>
+        <line class="wire" x1="120" y1="134" x2="120" y2="150"/>
+        <circle class="node" cx="120" cy="150" r="4"/>
+        {% endif %}
+
+        <!-- base lead -->
+        <line class="wire" x1="120" y1="150" x2="268" y2="150"/>
+        <text class="node-label" x="150" y="142">VB</text>
+        <text class="current" x="196" y="142">IB →</text>
+
+        <!-- transistor -->
+        <line class="wire" x1="284" y1="120" x2="284" y2="180"/>
+        <line class="wire" x1="268" y1="150" x2="284" y2="150"/>
+        <line class="wire" x1="284" y1="134" x2="346" y2="104"/>
+        <line class="wire" x1="284" y1="166" x2="346" y2="196"/>
+        <polygon class="arrow" points="346,196 332,193 339,184"/>
+        <text class="ref" x="356" y="150">Q1</text>
+        <text class="value" x="356" y="166">β = {{ display.beta }}</text>
+        <text class="node-label" x="246" y="200">VBE = {{ display.vbe }} V</text>
+
+        <!-- collector network -->
+        <line class="wire" x1="400" y1="34" x2="400" y2="52"/>
+        <rect class="part" x="392" y="52" width="16" height="38" rx="2"/>
+        <text class="value" x="424" y="66">{{ display.rc }}</text>
+        <text class="ref" x="424" y="80">RC</text>
+        <line class="wire" x1="400" y1="90" x2="400" y2="104"/>
+        <circle class="node" cx="400" cy="104" r="4"/>
+        <line class="wire" x1="346" y1="104" x2="400" y2="104"/>
+        <text class="node-label" x="410" y="100">VC</text>
+        <text class="current" x="360" y="92">IC →</text>
+
+        <!-- emitter network -->
+        <line class="wire" x1="346" y1="196" x2="400" y2="196"/>
+        <circle class="node" cx="400" cy="196" r="4"/>
+        <text class="node-label" x="410" y="192">VE</text>
+        {% if mode != "fixed" %}
+        <line class="wire" x1="400" y1="196" x2="400" y2="218"/>
+        <rect class="part" x="392" y="218" width="16" height="48" rx="2"/>
+        <text class="value" x="424" y="238">{{ display.re }}</text>
+        <text class="ref" x="424" y="252">RE</text>
+        <line class="wire" x1="400" y1="266" x2="400" y2="278"/>
+        {% else %}
+        <line class="wire" x1="400" y1="196" x2="400" y2="278"/>
+        {% endif %}
+        <line class="wire" x1="386" y1="278" x2="414" y2="278"/>
+        <line class="wire" x1="390" y1="284" x2="410" y2="284"/>
+        <line class="wire" x1="395" y1="290" x2="405" y2="290"/>
+        <text class="current" x="360" y="218">IE →</text>
+      </svg>
+      <figcaption>{{ mode_label }} · common-emitter stage</figcaption>
+    </figure>
+  </section>
+
+  <!-- ================= DC BIAS RESULTS ================= -->
+  <section class="card results-card">
+    <h2>DC Bias Results</h2>
+
+    {% if result %}
+    <div class="result-head">
+      <span class="badge region-{{ result.region }}">{{ result.region|upper }}</span>
+      <span class="result-mode">{{ mode_label }}</span>
+    </div>
+
+    <table class="result-table">
+      <tbody>
+        <tr><th>IB</th><td>{{ "%.3f"|format(result.ib_a * 1e6) }} <span class="u">µA</span></td></tr>
+        <tr><th>IC</th><td>{{ "%.3f"|format(result.ic_a * 1e3) }} <span class="u">mA</span></td></tr>
+        <tr><th>IE</th><td>{{ "%.3f"|format(result.ie_a * 1e3) }} <span class="u">mA</span></td></tr>
+        <tr><th>VB</th><td>{{ "%.3f"|format(result.vb_v) }} <span class="u">V</span></td></tr>
+        <tr><th>VC</th><td>{{ "%.3f"|format(result.vc_v) }} <span class="u">V</span></td></tr>
+        <tr><th>VE</th><td>{{ "%.3f"|format(result.ve_v) }} <span class="u">V</span></td></tr>
+        <tr><th>VCE</th><td>{{ "%.3f"|format(result.vce_v) }} <span class="u">V</span></td></tr>
+      </tbody>
+    </table>
+
+    <p class="check {{ 'ok' if result.check_passed else 'bad' }}">
+      KCL check: {{ "PASS" if result.check_passed else "FAIL" }}
+      <span class="delta">Δ = {{ "%.2e"|format(result.check_delta) }}</span>
+    </p>
+
+    {% if result.warnings %}
+    <ul class="warnings">
+      {% for warning in result.warnings %}
+      <li>{{ warning }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="status {{ 'status-warn' if result.warnings else 'status-ok' }}">
+      <div class="status-title">
+        <strong>
+          {%- if result.region == "active" -%}Active region approximation
+          {%- elif result.region == "cutoff" -%}Cutoff region warning
+          {%- else -%}Saturation region warning{%- endif -%}
+        </strong>
+        <span class="status-flag">{{ "CHECK" if result.warnings else "OK" }}</span>
+      </div>
+      <p>
+        VCE = {{ "%.2f"|format(result.vce_v) }} V
+        {% if result.region == "active" %}&gt; 0.2 V (transistor in active region){% endif %}
+        {% if result.region == "cutoff" %}— transistor is cut off; linear model does not apply{% endif %}
+        {% if result.region == "saturation" %}&lt; 0.2 V (transistor saturates; model not valid){% endif %}
+      </p>
+    </div>
+    {% else %}
+    <div class="status status-idle">
+      <div class="status-title">
+        <strong>No calculation yet</strong>
+        <span class="status-flag">READY</span>
+      </div>
+      <p>Enter the values on the left, then press <em>Calculate DC Bias</em>.</p>
+    </div>
+    {% endif %}
+  </section>
+</div>
 {% endblock %}
