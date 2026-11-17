@@ -105,6 +105,7 @@ app.py                    เลือกโหมด ตรวจอินพ�
 bjt.py                    สมการและ validation ของทั้ง 3 วงจร (ไม่ import Flask)
 templates/index.html      ฟอร์มตามโหมด ตารางผล ข้อความเตือน
 static/style.css          styling
+opencode.json             ตั้งค่า Playwright MCP สำหรับตรวจผ่าน Browser
 tests/                    ชุดทดสอบเดิมจาก Lab 2 (คงไว้)
 electrical.py             เครื่องคิดเลข DC จาก Lab 1 (คงไว้)
 docs/validation.md        ตารางผลจริง A1–A5 และหลักฐานจาก browser
@@ -117,3 +118,11 @@ docs/validation.md        ตารางผลจริง A1–A5 และห
 - สิ่งที่ต้องตรวจจากสมการ Engineering Electronics: ตัวหาร `(β+1)RE` ใน Emitter/Divider,
   `VE = 0` ใน Fixed, `IC = β·IB`, `VCE = VC − VE`, และหน่วย Ω→A ที่จุดรับข้อมูล
 - จุดเปลี่ยนหน่วย/เลือกฟังก์ชันอยู่ใน `app.py` (`MODE_FIELDS`, `SOLVERS`) ส่วนสมการอยู่ใน `bjt.py`
+
+## ส่งงาน (Submission)
+
+- **GitHub:** https://github.com/WITCHAYUT007/git-lab
+- **Commit SHA · โค้ด Lab 3:** `f56b0a1` — `feat: add fixed/emitter bias modes and reference-style UI`
+- **Commit SHA · หลักฐานและ MCP:** `bca8829` — `docs: add Playwright MCP config and browser validation evidence`
+- ตรวจ SHA ของ HEAD ได้ด้วย `git rev-parse HEAD`
+- หลักฐาน A1–A5 และภาพหน้าจอ: [`docs/validation.md`](docs/validation.md)
