@@ -47,6 +47,17 @@ python -m flask --app app run
 | Fixed Bias | `VCC`, `RB`, `RC`, `β`, `VBE` |
 | Emitter Bias | `VCC`, `RB`, `RC`, `RE`, `β`, `VBE` |
 
+## ตรวจผ่าน Browser (Lab 3)
+
+`opencode.json` ตั้งค่า **Playwright MCP** ไว้แล้ว (OpenCode V2 · `mcp.servers.playwright`,
+`type: local`, ใช้ Chrome แบบ isolated) หลังเพิ่ม/เปลี่ยน config ให้ปิด–เปิด OpenCode ครั้งหนึ่ง
+แล้วตรวจว่า MCP เชื่อม (`/mcps` ใน V2) ขณะที่ Flask ต้องรันค้างอยู่
+
+- เปิด `http://127.0.0.1:5000/` ด้วย Tools ของ Playwright MCP แล้วอ่าน snapshot
+- เลือกโหมด → **Apply mode** → กรอกช่องตามตาราง → **Calculate DC Bias** → อ่าน snapshot ใหม่
+- ผล A1–A5 ที่ตรวจจริงพร้อม screenshot อยู่ใน [`docs/validation.md`](docs/validation.md)
+- ไม่ต้องติดตั้ง Playwright ใน `requirements.txt` (เป็น MCP server ไม่ใช่ dependency ของแอป)
+
 ## สมการที่ใช้
 
 ```
