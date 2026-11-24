@@ -297,6 +297,10 @@ button.primary:disabled {
   stroke-linecap: round;
 }
 
+.schematic .device {
+  stroke-width: 2.4;
+}
+
 .schematic .part {
   stroke: var(--teal-dark);
   stroke-width: 2;
