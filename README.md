@@ -172,5 +172,6 @@ docs/validation.md        ผลจริง A1–A5 และ B1–B8 + หล�
 - **Commit SHA · โค้ด Lab 3:** `f56b0a1` — `feat: add fixed/emitter bias modes and reference-style UI`
 - **Commit SHA · หลักฐานและ MCP:** `bca8829` — `docs: add Playwright MCP config and browser validation evidence`
 - **Commit SHA · โค้ด Lab 4:** `7e3a7ba9d5747f566c9069bca106314b1d9c3242` — `feat: add ngspice CE amplifier simulator with AC/transient plots (Lab 4)`
+- **Commit SHA · ปรับปรุง UI:** `115f6b0822545dab61ecd379d5598e2548896c54` — `polish: strengthen UI hierarchy, contrast and chart readability`
 - ตรวจ SHA ของ HEAD ได้ด้วย `git rev-parse HEAD`
 - หลักฐาน A1–A5 และ B1–B8 รวมภาพหน้าจอ: [`docs/validation.md`](docs/validation.md)
