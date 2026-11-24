@@ -247,3 +247,14 @@ empty `Ready`, error `Error` (ไม่ผลเก่า), success `Success` �
 **ข้อจำกัดเหมือนเดิม:** โมเดลใน session นี้ไม่รองรับ image input จึงไม่ได้อ่าน pixel ภาพด้วยตา
 การยืนยันใช้ Playwright DOM measurement + accessibility snapshot + detector ตามตารางด้านบน
 นอกจากนี้ยังใช้ `impeccable context` + `craft-floor` + `polish` playbook เป็นกรอบตัดสินใจ
+
+## 15. แหล่งอ้างอิง
+
+| แหล่ง | ใช้สำหรับ |
+| --- | --- |
+| ใบงาน Lab 03 `Lab03_BJT_DC_Bias_Web_App*.html` (ไฟล์ในเครื่อง) | รูปแบบตาราง A1–A5, ข้อ 06–07 ที่นักศึกษาต้องทวนเอง, เกณฑ์ `ΔIC/ΔVCE` |
+| ใบงาน Lab 04 `Lab04_BJT_Amplifier_Simulator_2-2569.html` (ไฟล์ในเครื่อง) | เกณฑ์ B1–B8, หน้าที่ของ `.op/.ac/.tran`, การแยก SPICE/Analytical |
+| ngspice 47 — <https://ngspice.sourceforge.io/download.html> และ <https://ngspice.sourceforge.io/docs.html> | ติดตั้ง binary แบบพกพา, ไวยากรณ์ netlist, `.print`, `.op/.ac/.tran` และ `.model` |
+| Flask — <https://flask.palletsprojects.com/> | route `/`, `/simulate`, `request.form`, `render_template` |
+| สมการ DC bias ใน README หัวข้อ “สมการที่ใช้” | ตัวหาร `(β+1)RE`, `IC=β·IB`, `VCE=VC−VE`, หน่วย Ω→A |
+| GitHub repo <https://github.com/WITCHAYUT007/git-lab> + Commit SHA ใน README | หลักฐานโค้ด/เอกสารที่ส่งจริง ตรวจด้วย `git rev-parse HEAD` |

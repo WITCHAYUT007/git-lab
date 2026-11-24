@@ -57,8 +57,8 @@ $env:NGSPICE_EXE = "C:\path\to\ngspice_con.exe"
 python -m flask --app app run
 ```
 
-เปิด http://127.0.0.1:5000/ เลือกวงจรในช่อง **Bias circuit** กด **Apply mode**
-เพื่อโหลดฟอร์มของโหมดนั้น แล้วกรอกค่าแล้วกด **Calculate**
+เปิด http://127.0.0.1:5000/ เลือกวงจรในช่อง **Bias circuit** → ฟอร์มของโหมดนั้น
+โหลดทันที (ไม่ต้องกด **Apply mode**) แล้วกรอกค่าแล้วกด **Calculate DC Bias**
 
 | โหมด | ช่องที่ใช้ |
 | --- | --- |
@@ -88,7 +88,7 @@ ngspice และ solver log excerpt. ถ้า solver fail จะมีข้�
 แล้วตรวจว่า MCP เชื่อม (`/mcps` ใน V2) ขณะที่ Flask ต้องรันค้างอยู่
 
 - เปิด `http://127.0.0.1:5000/` ด้วย Tools ของ Playwright MCP แล้วอ่าน snapshot
-- เลือกโหมด → **Apply mode** → กรอกช่องตามตาราง → **Calculate DC Bias** → อ่าน snapshot ใหม่
+- เลือกโหมด → ฟอร์มเปลี่ยนทันที → กรอกช่องตามตาราง → **Calculate DC Bias** → อ่าน snapshot ใหม่
 - ผล A1–A5 ที่ตรวจจริงพร้อม screenshot อยู่ใน [`docs/validation.md`](docs/validation.md)
 - ผล **B1–B8** ของ Lab 4 (DC/AC/Transient, error state, desktop/mobile) อยู่ใน
   [`docs/validation.md`](docs/validation.md) หัวข้อ 9–13
@@ -150,21 +150,18 @@ tools/ngspice/            ngspice portable (ignore ใน git — ต้อง�
 docs/validation.md        ผลจริง A1–A5 และ B1–B8 + หลักฐานจาก browser
 ```
 
-## ส่วนที่ AI ช่วยสร้าง / สิ่งที่ตรวจ
+## ส่วนที่ AI ช่วยสร้าง / สิ่งที่ตรวจ (5 บรรทัด)
 
-- **Lab 3:** AI เขียน `analyze_fixed_bias`, `analyze_emitter_bias`, validation ร่วม
-  `_validate_inputs`, การเลือกโหมดใน `app.py` และฟอร์มตามโหมด
-- **Lab 4:** AI เขียน `spice_engine.py`, `charts.py`, route `/simulate`, ส่วน UI simulator,
-  และปรับ README นี้； โหลด ngspice แบบพกพา + ติดตั้ง Impeccable skill ตามที่อนุมัติ
-- **Impeccable:** ใช้ context/craft-floor/polish + detector ก่อน–หลัง (1280×800 และ
-  390×844) แก้ contrast `status-flag` 4.4:1 → ผ่าน, ยุบ nested cards, เปลี่ยน
-  error/warning เป็น full border, ปรับลำดับตัวอักษร/ระยะ/header/กราฟให้เห็นชัดขึ้น —
-  ผล Detector รอบสุดท้าย `[]` ทั้ง 2 viewport
-  (ภาพก่อน–หลังอยู่ใน `docs/ui-before-*.png` และ `docs/ui-after-*.png`)
-- สิ่งที่ต้องตรวจจากสมการ Engineering Electronics: ตัวหาร `(β+1)RE` ใน Emitter/Divider,
-  `VE = 0` ใน Fixed, `IC = β·IB`, `VCE = VC − VE`, และหน่วย Ω→A ที่จุดรับข้อมูล
-- **นักศึกษาต้องทวนเอง 1 กรณีบนหน้าเว็บ** ตามข้อ 06–07 ของใบงาน Lab 3 (แนะนำ A4)
-  และควรตรวจด้วยตาว่ากราฟ Bode/waveform ที่ได้ตรงกับการตีความทางวงจร
+- **AI · Lab 3:** เขียน `analyze_fixed_bias`, `analyze_emitter_bias`, `_validate_inputs`,
+  โหมดใน `app.py` และฟอร์มตามโหมด โดยคงผล Divider เดิม 28/28 tests
+- **AI · Lab 4:** เขียน `spice_engine.py`, `charts.py`, route `/simulate`, UI simulator,
+  เรียก ngspice 47 จริงสำหรับ `.op/.ac/.tran` ไม่ mock ค่า/กราฟ
+- **AI · UI/Impeccable:** ปรับ contrast/layout/type scale, เปลี่ยนโหมดทันที, แก้สัญลักษณ์
+  Q1 ตามภาพที่ส่ง, เก็บภาพก่อน–หลังและ detector `[]` ทั้ง desktop/mobile
+- **AI · เอกสาร:** บันทึก A1–A5, B1–B8, วิธีตรวจ, ความคลาดเคลื่อน/ข้อจำกัด,
+  แหล่งอ้างอิง, screenshot จริง, GitHub URL และ Commit SHA ใน README นี้
+- **นักศึกษาตรวจเอง:** ทวน A4 บนหน้าเว็บตามข้อ 06–07, ดูกราฟ Bode/waveform ด้วยตา,
+  ทวนสมการ/หน่วย/ความคลาดเคลื่อน และ commit/push + อัปเดต SHA ถ้าแก้เพิ่ม
 
 ## ส่งงาน (Submission)
 
