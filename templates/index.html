@@ -12,14 +12,15 @@
   </div>
 </header>
 
-<form method="post" action="/" class="mode-bar">
+<form method="post" action="/" class="mode-bar" id="mode-form">
   <label for="mode">Bias circuit</label>
   <select id="mode" name="mode">
     {% for key, label in modes %}
     <option value="{{ key }}"{% if key == mode %} selected{% endif %}>{{ label }}</option>
     {% endfor %}
   </select>
-  <button type="submit" name="action" value="mode">Apply mode</button>
+  <input type="hidden" name="action" value="mode">
+  <button type="submit" class="mode-apply">Apply mode</button>
 </form>
 
 <div class="grid">
@@ -389,6 +390,20 @@
 </section>
 
 <script>
+  (function () {
+    var mode = document.getElementById("mode");
+    var modeForm = document.getElementById("mode-form");
+    if (!mode || !modeForm) { return; }
+    modeForm.classList.add("is-auto");
+    mode.addEventListener("change", function () {
+      if (modeForm.requestSubmit) {
+        modeForm.requestSubmit();
+      } else {
+        modeForm.submit();
+      }
+    });
+  }());
+
   (function () {
     var form = document.getElementById("sim-form");
     if (!form) { return; }

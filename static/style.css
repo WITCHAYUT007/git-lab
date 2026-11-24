@@ -122,6 +122,11 @@ textarea {
   font-size: 0.9rem;
 }
 
+/* With JavaScript the select submits itself; keep the button as a no-JS fallback. */
+.mode-bar.is-auto .mode-apply {
+  display: none;
+}
+
 select {
   padding: 0.55rem 0.7rem;
   border: 1px solid var(--line);

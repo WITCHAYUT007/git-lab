@@ -232,13 +232,15 @@ accessibility snapshot และ detector ของ Impeccable ตามด้�
 | Simulator | มี eyebrow เหนือ h2, empty state เป็น glyph `~` | ลบ eyebrow ตาม craft floor, เปลี่ยนเป็น SVG waveform ที่เขียนขึ้นเอง, ย้าย "Lab 04" ไป chip ของ solver |
 | กราฟ | ตัวอักษร SVG 11–12px ย่อลงบนมือถือจนอ่านแทบไม่ได้ | 13–14px + `.plot { min-width: 640px }` บนมือถือ (เลื่อนในกราฟได้ แต่หน้าเว็บไม่เลื่อนแนวนอน) |
 | Browser surfaces | ใช้ค่า default หมด | Theme `::selection`, caret, scrollbar, focus-visible, underline-free control states |
+| ตัวเลือกโหมด | ต้องกด **Apply mode** หลังเปลี่ยน select | เปลี่ยน select แล้ว POST ทันทีด้วย `action=mode`; ปุ่ม Apply ซ่อนเมื่อมี JS แต่ยังเป็น fallback เมื่อไม่มี JS |
 | Detector | mobile พบ `flat-type-hierarchy` 1 จุด | 1280×800 → `[]`, 390×844 → `[]` หลังปรับ h1/h2/h3 ให้มี step ≥1.25× |
 
 **วัดจาก browser จริงหลังปรับ:** contrast h1/header 13.64:1, subtitle/button meta 9.44:1,
 label/lede 5.02:1, status 5.04:1, note 7.36:1 — ผ่าน 4.5:1 ทุกจุดที่วัด;
 `scrollWidth == clientWidth` ที่ 1430 px และ 380 px; ไม่มี control เล็กกว่า 24×24 px;
 empty `Ready`, error `Error` (ไม่ผลเก่า), success `Success` ยังทำงานเหมือนเดิม;
-ชุดทดสอบ 28/28 ยังผ่าน
+เลือก Divider → Fixed → Emitter เปลี่ยนฟอร์ม/subtitle ทันทีโดยไม่กด Apply,
+กด Calculate หลังเปลี่ยนโหมดยังได้ผล `ACTIVE` `IC 1.324 mA`, ชุดทดสอบ 28/28 ยังผ่าน
 
 **ข้อจำกัดเหมือนเดิม:** โมเดลใน session นี้ไม่รองรับ image input จึงไม่ได้อ่าน pixel ภาพด้วยตา
 การยืนยันใช้ Playwright DOM measurement + accessibility snapshot + detector ตามตารางด้านบน
