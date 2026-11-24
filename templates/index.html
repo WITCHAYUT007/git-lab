@@ -201,4 +201,205 @@
     {% endif %}
   </section>
 </div>
+
+<!-- ================= LAB 04 : NGSPICE CE AMPLIFIER SIMULATOR ================= -->
+<section class="simulator" id="simulator" aria-labelledby="sim-heading">
+  <header class="sim-header">
+    <div>
+      <p class="eyebrow">Lab 04 · ngspice 47 · real solver run</p>
+      <h2 id="sim-heading">Common-Emitter Amplifier Simulator</h2>
+      <p class="sim-lede">
+        Voltage-divider CE stage with unbypassed emitter resistor. Every number
+        and every curve below is produced by <strong>ngspice</strong> from the
+        netlist shown at the bottom — no mock values, no pre-drawn plots.
+      </p>
+    </div>
+    <div class="engine-chip">
+      <span class="engine-chip-label">Solver</span>
+      <strong>ngspice{% if sim and sim.result.version %} {{ sim.result.version }}{% endif %}</strong>
+      <span class="engine-chip-note">external process · 30 s timeout</span>
+    </div>
+  </header>
+
+  <div class="sim-grid">
+    <!-- ---------- controls ---------- -->
+    <form method="post" action="/simulate" class="card sim-controls" id="sim-form">
+      <h3>Simulation setup</h3>
+
+      <label class="sim-field" for="sim-analysis">
+        <span class="field-top"><span class="field-label">Analysis</span></span>
+        <span class="field-hint">.op / .ac / .tran — one run per submit</span>
+        <select id="sim-analysis" name="analysis">
+          {% for key, label in analyses.items() %}
+          <option value="{{ key }}"{% if sim_analysis == key %} selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <fieldset class="sim-group">
+        <legend>Source</legend>
+        {% for name, label, unit, hint in sim_fields if name in ("amp_mv", "freq_hz") %}
+        <label class="sim-field" for="sim-{{ name }}">
+          <span class="field-top">
+            <span class="field-label">{{ label }}</span>
+            <span class="field-unit">{{ unit }}</span>
+          </span>
+          <span class="field-hint">{{ hint }}</span>
+          <input type="number" step="any" required id="sim-{{ name }}" name="{{ name }}"
+                 value="{{ sim_form[name] }}">
+        </label>
+        {% endfor %}
+      </fieldset>
+
+      <fieldset class="sim-group">
+        <legend>Circuit &amp; coupling</legend>
+        <div class="sim-fields">
+          {% for name, label, unit, hint in sim_fields if name not in ("amp_mv", "freq_hz") %}
+          <label class="sim-field" for="sim-{{ name }}">
+            <span class="field-top">
+              <span class="field-label">{{ label }}</span>
+              <span class="field-unit">{{ unit }}</span>
+            </span>
+            <span class="field-hint">{{ hint }}</span>
+            <input type="number" step="any" required id="sim-{{ name }}" name="{{ name }}"
+                   value="{{ sim_form[name] }}">
+          </label>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <button class="primary sim-run" type="submit" id="sim-run">
+        <span class="run-label">Run simulation</span>
+      </button>
+      <p class="sim-help">Amplitude is a peak value in mV; frequency sets both the AC source and the 5-cycle transient window.</p>
+    </form>
+
+    <!-- ---------- results ---------- -->
+    <div class="card sim-results" id="sim-results" aria-live="polite">
+      <div class="sim-results-head">
+        <h3>SPICE results</h3>
+        {% if sim_error %}
+        <span class="sim-status is-error" id="sim-status"><span class="status-dot" aria-hidden="true"></span>Error</span>
+        {% elif sim %}
+        <span class="sim-status is-success" id="sim-status"><span class="status-dot" aria-hidden="true"></span>Success</span>
+        {% else %}
+        <span class="sim-status is-idle" id="sim-status"><span class="status-dot" aria-hidden="true"></span>Ready</span>
+        {% endif %}
+      </div>
+
+      {% if sim_error %}
+      <div class="sim-error" role="alert">
+        <strong>Simulation failed — no stale results are shown.</strong>
+        <p>{{ sim_error }}</p>
+      </div>
+
+      {% elif sim %}
+      <p class="sim-run-meta">
+        <span class="badge badge-spice">SPICE</span>
+        {{ sim.analysis_label }} · engine <code>{{ sim.result.engine }}</code>
+        · version {{ sim.result.version }}
+      </p>
+
+      <h4 class="sim-subhead">{{ sim.analysis_label }} — measured from the solver log</h4>
+      <table class="result-table sim-metrics">
+        <thead>
+          <tr><th scope="col">Quantity</th><th scope="col">SPICE value</th><th scope="col">Unit</th></tr>
+        </thead>
+        <tbody>
+          {% for name, value, unit in sim.metrics %}
+          <tr><th scope="row">{{ name }}</th><td>{{ value }}</td><td><span class="u">{{ unit }}</span></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <p class="sim-note">{{ sim.note }}</p>
+
+      {% if sim.chart %}
+      <figure class="chart-frame">
+        <figcaption>
+          {% if sim.result.analysis == "ac" %}Bode plot — gain (dB) and phase (deg) vs frequency (Hz, log axis)
+          {% else %}Transient waveforms — Vin and Vout (mV) vs time (ms){% endif %}
+          <span class="chart-source">source: ngspice {{ sim.result.version }} · {{ sim.analysis_label }}</span>
+        </figcaption>
+        {{ sim.chart|safe }}
+      </figure>
+      {% endif %}
+
+      <h4 class="sim-subhead">Source attribution — SPICE vs Analytical (Lab 3)</h4>
+      {% if sim.result.analysis == "dc" and sim.reference %}
+      <table class="result-table sim-compare">
+        <thead>
+          <tr><th scope="col">Quantity</th><th scope="col">SPICE (.op)</th><th scope="col">Analytical (Lab 3)</th><th scope="col">Unit</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">VB</th><td>{{ "%.4f"|format(sim.result.derived.vb_v) }}</td><td>{{ "%.4f"|format(sim.reference.vb_v) }}</td><td><span class="u">V</span></td></tr>
+          <tr><th scope="row">VE</th><td>{{ "%.4f"|format(sim.result.derived.ve_v) }}</td><td>{{ "%.4f"|format(sim.reference.ve_v) }}</td><td><span class="u">V</span></td></tr>
+          <tr><th scope="row">VC</th><td>{{ "%.4f"|format(sim.result.derived.vc_v) }}</td><td>{{ "%.4f"|format(sim.reference.vc_v) }}</td><td><span class="u">V</span></td></tr>
+          <tr><th scope="row">VCE</th><td>{{ "%.4f"|format(sim.result.derived.vce_v) }}</td><td>{{ "%.4f"|format(sim.reference.vce_v) }}</td><td><span class="u">V</span></td></tr>
+          <tr><th scope="row">IC</th><td>{{ "%.4f"|format(sim.result.derived.ic_ma) }}</td><td>{{ "%.4f"|format(sim.reference.ic_a * 1e3) }}</td><td><span class="u">mA</span></td></tr>
+        </tbody>
+      </table>
+      {% else %}
+      <p class="sim-note">
+        Lab 3 is a <strong>DC bias</strong> model only — it has no analytical AC
+        or transient solution, so no analytical column is invented here. The
+        table below shows the DC operating point from this SPICE run beside the
+        Lab 3 analytical bias point for context only.
+      </p>
+      {% if sim.reference %}
+      <table class="result-table sim-compare">
+        <thead>
+          <tr><th scope="col">Quantity (DC context)</th><th scope="col">SPICE (.op)</th><th scope="col">Analytical (Lab 3)</th><th scope="col">Unit</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">VB</th><td>{{ "%.4f"|format(sim.result.op.b) }}</td><td>{{ "%.4f"|format(sim.reference.vb_v) }}</td><td><span class="u">V</span></td></tr>
+          <tr><th scope="row">VCE</th><td>{{ "%.4f"|format(sim.result.op.c - sim.result.op.e) }}</td><td>{{ "%.4f"|format(sim.reference.vce_v) }}</td><td><span class="u">V</span></td></tr>
+          <tr><th scope="row">IC</th><td>{{ "%.4f"|format((sim.result.op.vcc - sim.result.op.c) / (sim_form.rc|float) * 1000) }}</td><td>{{ "%.4f"|format(sim.reference.ic_a * 1e3) }}</td><td><span class="u">mA</span></td></tr>
+        </tbody>
+      </table>
+      {% endif %}
+      {% endif %}
+
+      <details class="sim-details">
+        <summary>Netlist sent to ngspice</summary>
+        <pre><code>{{ sim.result.netlist }}</code></pre>
+      </details>
+      <details class="sim-details">
+        <summary>Solver log excerpt (last 4000 characters)</summary>
+        <pre><code>{{ sim.result.log_excerpt }}</code></pre>
+      </details>
+      <details class="sim-details">
+        <summary>BJT model used</summary>
+        <pre><code>{{ sim.model_line }}</code></pre>
+      </details>
+
+      {% else %}
+      <div class="sim-empty">
+        <div class="sim-empty-mark" aria-hidden="true">~</div>
+        <h4>No simulation run yet</h4>
+        <p>Choose an analysis, set the source amplitude and frequency, then press
+          <em>Run simulation</em>. Results, plots, netlist and solver log will appear here.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var form = document.getElementById("sim-form");
+    if (!form) { return; }
+    form.addEventListener("submit", function () {
+      var status = document.getElementById("sim-status");
+      var button = document.getElementById("sim-run");
+      if (status) {
+        status.className = "sim-status is-running";
+        status.innerHTML = '<span class="status-dot" aria-hidden="true"></span>Running';
+      }
+      if (button) {
+        button.disabled = true;
+        button.querySelector(".run-label").textContent = "Running ngspice…";
+      }
+    });
+  }());
+</script>
 {% endblock %}

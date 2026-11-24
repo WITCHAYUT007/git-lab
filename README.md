@@ -1,4 +1,4 @@
-# BJT Common-Emitter DC Bias (ENG29 2121) · Lab 3
+# BJT Common-Emitter DC Bias + SPICE Amplifier Simulator (ENG29 2121) · Lab 3–4
 
 เว็บแอป Flask ที่คำนวณจุดการทำงาน DC (DC operating point) ของทรานซิสเตอร์
 NPN แบบ common-emitter ได้ 3 รูปแบบในหน้าเดียว:
@@ -10,10 +10,17 @@ NPN แบบ common-emitter ได้ 3 รูปแบบในหน้าเ
 ผลลัพธ์: `IB`, `IC`, `IE`, `VB`, `VC`, `VE`, `VCE` พร้อมหน่วย, ตรวจสอบอินพุต,
 แจ้งเตือนเมื่ออยู่นอกย่าน Forward Active และแสดงผลตรวจสอบสมการ (KCL/nodal) ของแต่ละโหมด
 
+**Lab 4 เพิ่มส่วน Simulator ด้านล่าง:** เรียก ngspice จริงสำหรับ `.op`, `.ac`, `.tran`
+ของวงจร CE voltage-divider (RE ไม่ bypass) แสดงกราฟ Bode/waveform ที่สร้างจาก
+ผล solver, แยกป้าย **SPICE** กับ **Analytical (Lab 3)** และแสดง netlist + log จริง
+Lab 3 ทั้ง 3 โหมดและผลเดิมยังใช้ได้เหมือนเดิม
+
 ## ขอบเขต
 
-- คำนวณเฉพาะ DC bias ด้วยแบบจำลอง active-region ที่ β และ VBE คงที่
-- ไม่มี AC, transient, SPICE, DC load line, ตัวเก็บประจุ bypass หรือ circuit editor
+- Lab 3 คำนวณเฉพาะ DC bias ด้วยแบบจำลอง active-region ที่ β และ VBE คงที่
+- Lab 4 จำลองเฉพาะวงจร CE reference ที่กำหนด (ไม่มี circuit editor, ไม่มี bypass cap,
+  ไม่มี parameter sweep) และไม่มี analytical AC model ในแอป
+- ไม่มี DC load line
 - ถ้าคำนวณแล้ว `IB ≤ 0` หรือ `VCE ≤ 0.2 V` จะแสดงคำเตือนว่าแบบจำลองอาจใช้ไม่ได้
   (ไม่ได้จำลองค่าที่ถูกต้องใน cutoff/saturation สำหรับโหมดใหม่)
 - อินพุตผิด (ไม่ใช่ตัวเลข, ไม่จำกัด, หรือค่าที่ต้องเป็นบวกแต่ ≤ 0) แสดงข้อความแก้ไขทันที
@@ -25,6 +32,18 @@ NPN แบบ common-emitter ได้ 3 รูปแบบในหน้าเ
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 ```
+
+**ngspice (จำเป็นสำหรับ Lab 4)** — เครื่องนี้ใช้ไฟล์พกพา `tools/ngspice/ngspice_con.exe`
+(ngspice 47) ซึ่งถูก ignore ใน git. ถ้า clone จาก GitHub ให้โหลด binary จาก
+<https://ngspice.sourceforge.io/download.html> แล้วเลือกวิธีใดวิธีหนึ่ง:
+
+```powershell
+# วิธีที่ 1: วาง ngspice_con.exe ไว้ที่ tools/ngspice/
+# วิธีที่ 2: ตั้ง environment variable ชี้ไปที่ executable ที่มีอยู่แล้ว
+$env:NGSPICE_EXE = "C:\path\to\ngspice_con.exe"
+```
+
+ตรวจเวอร์ชันด้วย `& "$env:NGSPICE_EXE" --version` (หรือ `ngspice --version` ถ้าอยู่ใน PATH)
 
 ## การรัน
 
@@ -47,6 +66,21 @@ python -m flask --app app run
 | Fixed Bias | `VCC`, `RB`, `RC`, `β`, `VBE` |
 | Emitter Bias | `VCC`, `RB`, `RC`, `RE`, `β`, `VBE` |
 
+### ใช้ Simulator (Lab 4)
+
+เลื่อนลงไปที่การ์ด **Common-Emitter Amplifier Simulator** แล้ว:
+
+1. เลือก Analysis: `DC operating point (.op)` / `AC frequency response (.ac)` /
+   `Transient waveform (.tran)`
+2. กรอก **Amplitude (mV peak)** และ **Frequency (Hz)** — frequency ยังกำหนด
+   ความยาวหน้าต่าง transient = 5 รอบด้วย
+3. ปรับ `R1/R2/RC/RE/RL/Cin/Cout` หากต้องการ (ค่าเริ่มต้นเป็นวงจรอ้างอิง)
+4. กด **Run simulation** → status เปลี่ยน `Ready → Running → Success/Error`
+
+ผลที่ได้: ตาราง metric พร้อมหน่วย, กราฟ Bode (gain dB + phase deg vs Hz log)
+หรือ waveform (Vin/Vout mV vs ms), ตารางเทียบ SPICE/Analytical, netlist ที่ส่งให้
+ngspice และ solver log excerpt. ถ้า solver fail จะมีข้อความ error และ **ไม่แสดงผลเก่า**
+
 ## ตรวจผ่าน Browser (Lab 3)
 
 `opencode.json` ตั้งค่า **Playwright MCP** ไว้แล้ว (OpenCode V2 · `mcp.servers.playwright`,
@@ -56,6 +90,8 @@ python -m flask --app app run
 - เปิด `http://127.0.0.1:5000/` ด้วย Tools ของ Playwright MCP แล้วอ่าน snapshot
 - เลือกโหมด → **Apply mode** → กรอกช่องตามตาราง → **Calculate DC Bias** → อ่าน snapshot ใหม่
 - ผล A1–A5 ที่ตรวจจริงพร้อม screenshot อยู่ใน [`docs/validation.md`](docs/validation.md)
+- ผล **B1–B8** ของ Lab 4 (DC/AC/Transient, error state, desktop/mobile) อยู่ใน
+  [`docs/validation.md`](docs/validation.md) หัวข้อ 9–13
 - ไม่ต้องติดตั้ง Playwright ใน `requirements.txt` (เป็น MCP server ไม่ใช่ dependency ของแอป)
 
 ## สมการที่ใช้
@@ -101,23 +137,32 @@ A4: `IC` ต้อง **ลดลง** จาก A3 เพราะ `(β+1)RE` �
 ## โครงสร้างไฟล์
 
 ```
-app.py                    เลือกโหมด ตรวจอินพุต แปลงหน่วย เรียกฟังก์ชัน และ render
+app.py                    เลือกโหมด Lab 3 + route /simulate ของ Lab 4
 bjt.py                    สมการและ validation ของทั้ง 3 วงจร (ไม่ import Flask)
-templates/index.html      ฟอร์มตามโหมด ตารางผล ข้อความเตือน
-static/style.css          styling
+spice_engine.py           สร้าง netlist, เรียก ngspice ด้วย subprocess, parse .op/.ac/.tran
+charts.py                 สร้าง SVG Bode/waveform จาก array ที่ parse ได้ (ไม่เพิ่ม dependency)
+templates/index.html      ฟอร์ม Lab 3 + ส่วน simulator Lab 4
+static/style.css          styling ทั้ง 2 แลป + responsive
 opencode.json             ตั้งค่า Playwright MCP สำหรับตรวจผ่าน Browser
-tests/                    ชุดทดสอบเดิมจาก Lab 2 (คงไว้)
+tests/                    ชุดทดสอบเดิมจาก Lab 2/3 (คงไว้ 28/28)
 electrical.py             เครื่องคิดเลข DC จาก Lab 1 (คงไว้)
-docs/validation.md        ตารางผลจริง A1–A5 และหลักฐานจาก browser
+tools/ngspice/            ngspice portable (ignore ใน git — ต้องเตรียมเองตอน clone)
+docs/validation.md        ผลจริง A1–A5 และ B1–B8 + หลักฐานจาก browser
 ```
 
 ## ส่วนที่ AI ช่วยสร้าง / สิ่งที่ตรวจ
 
-- AI เขียน `analyze_fixed_bias`, `analyze_emitter_bias`, ฟังก์ชัน validation ร่วม
-  `_validate_inputs`, การเลือกโหมดใน `app.py`, ฟอร์มตามโหมด และปรับ README นี้
+- **Lab 3:** AI เขียน `analyze_fixed_bias`, `analyze_emitter_bias`, validation ร่วม
+  `_validate_inputs`, การเลือกโหมดใน `app.py` และฟอร์มตามโหมด
+- **Lab 4:** AI เขียน `spice_engine.py`, `charts.py`, route `/simulate`, ส่วน UI simulator,
+  และปรับ README นี้； โหลด ngspice แบบพกพา + ติดตั้ง Impeccable skill ตามที่อนุมัติ
+- **Impeccable:** ใช้ context/craft-floor/polish + detector ก่อน–หลัง (1280×800 และ
+  390×844) แก้ contrast `status-flag` 4.4:1 → ผ่าน, ยุบ nested cards, เปลี่ยน
+  error/warning เป็น full border — ผล Detector รอบสุดท้าย `[]` ทั้ง 2 viewport
 - สิ่งที่ต้องตรวจจากสมการ Engineering Electronics: ตัวหาร `(β+1)RE` ใน Emitter/Divider,
   `VE = 0` ใน Fixed, `IC = β·IB`, `VCE = VC − VE`, และหน่วย Ω→A ที่จุดรับข้อมูล
-- จุดเปลี่ยนหน่วย/เลือกฟังก์ชันอยู่ใน `app.py` (`MODE_FIELDS`, `SOLVERS`) ส่วนสมการอยู่ใน `bjt.py`
+- **นักศึกษาต้องทวนเอง 1 กรณีบนหน้าเว็บ** ตามข้อ 06–07 ของใบงาน Lab 3 (แนะนำ A4)
+  และควรตรวจด้วยตาว่ากราฟ Bode/waveform ที่ได้ตรงกับการตีความทางวงจร
 
 ## ส่งงาน (Submission)
 
