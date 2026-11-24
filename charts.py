@@ -7,11 +7,11 @@ from __future__ import annotations
 
 import math
 
-TEAL = "#0c8e83"
-ORANGE = "#c77a35"
-GRID = "#dce7ee"
-INK = "#254d67"
-MUTED = "#526c7f"
+TEAL = "#018092"
+ORANGE = "#a65316"
+GRID = "#d7e4ec"
+INK = "#123047"
+MUTED = "#536e80"
 
 
 def _downsample(rows: list[dict[str, float]], limit: int = 400) -> list[dict[str, float]]:
@@ -102,7 +102,7 @@ def bode_svg(rows: list[dict[str, float]]) -> str:
             )
             parts.append(
                 f'<text x="{left - 8}" y="{y + 4:.1f}" text-anchor="end" '
-                f'font-size="12" fill="{MUTED}">{tick:.1f}</text>'
+                f'font-size="14" fill="{MUTED}">{tick:.1f}</text>'
             )
         for tick in _log_ticks(fmin, fmax):
             if tick < fmin or tick > fmax:
@@ -114,7 +114,7 @@ def bode_svg(rows: list[dict[str, float]]) -> str:
             )
             parts.append(
                 f'<text x="{x:.1f}" y="{top_y + plot_h + 18:.1f}" text-anchor="middle" '
-                f'font-size="11" fill="{MUTED}">{tick:g}</text>'
+                f'font-size="13" fill="{MUTED}">{tick:g}</text>'
             )
         points = [
             (x_pos(row["freq_hz"]), y_pos(values[i], low, high, top_y))
@@ -122,17 +122,17 @@ def bode_svg(rows: list[dict[str, float]]) -> str:
         ]
         parts.append(_polyline(points, colour))
         parts.append(
-            f'<text x="{left + 8}" y="{top_y + 16:.1f}" font-size="12" '
+            f'<text x="{left + 8}" y="{top_y + 16:.1f}" font-size="14" '
             f'fill="{INK}" font-weight="700">{label}</text>'
         )
         parts.append(
-            f'<text x="{left - 52}" y="{top_y + plot_h / 2:.1f}" font-size="12" '
+            f'<text x="{left - 52}" y="{top_y + plot_h / 2:.1f}" font-size="14" '
             f'fill="{INK}" transform="rotate(-90 {left - 52} {top_y + plot_h / 2:.1f})">'
             f'{"dB" if panel == 0 else "deg"}</text>'
         )
     parts.append(
         f'<text x="{left + plot_w / 2:.1f}" y="{height - 8}" text-anchor="middle" '
-        f'font-size="12" fill="{INK}">Frequency (Hz, log scale)</text>'
+        f'font-size="14" fill="{INK}">Frequency (Hz, log scale)</text>'
     )
     parts.append("</svg>")
     return "".join(parts)
@@ -184,7 +184,7 @@ def waveform_svg(rows: list[dict[str, float]]) -> str:
         )
         parts.append(
             f'<text x="{left - 8}" y="{y + 4:.1f}" text-anchor="end" '
-            f'font-size="12" fill="{MUTED}">{tick:.0f}</text>'
+            f'font-size="14" fill="{MUTED}">{tick:.0f}</text>'
         )
     for tick in _linear_ticks(tmin, tmax, 6):
         x = x_pos(tick)
@@ -194,7 +194,7 @@ def waveform_svg(rows: list[dict[str, float]]) -> str:
         )
         parts.append(
             f'<text x="{x:.1f}" y="{top + plot_h + 18:.1f}" text-anchor="middle" '
-            f'font-size="11" fill="{MUTED}">{tick:.2f}</text>'
+            f'font-size="13" fill="{MUTED}">{tick:.2f}</text>'
         )
 
     vin_points = [
@@ -206,27 +206,27 @@ def waveform_svg(rows: list[dict[str, float]]) -> str:
     parts.append(_polyline(vin_points, TEAL))
     parts.append(_polyline(vout_points, ORANGE))
     parts.append(
-        f'<text x="{left - 52}" y="{top + plot_h / 2:.1f}" font-size="12" '
+        f'<text x="{left - 52}" y="{top + plot_h / 2:.1f}" font-size="14" '
         f'fill="{INK}" transform="rotate(-90 {left - 52} {top + plot_h / 2:.1f})">'
         'Voltage (mV)</text>'
     )
     parts.append(
         f'<text x="{left + plot_w / 2:.1f}" y="{height - 8}" text-anchor="middle" '
-        f'font-size="12" fill="{INK}">Time (ms)</text>'
+        f'font-size="14" fill="{INK}">Time (ms)</text>'
     )
     parts.append(
         f'<line x1="{left + 12}" y1="{top + 12}" x2="{left + 44}" y2="{top + 12}" '
         f'stroke="{TEAL}" stroke-width="3"/>'
     )
     parts.append(
-        f'<text x="{left + 50}" y="{top + 16}" font-size="12" fill="{INK}">Vin</text>'
+        f'<text x="{left + 50}" y="{top + 16}" font-size="14" fill="{INK}">Vin</text>'
     )
     parts.append(
         f'<line x1="{left + 100}" y1="{top + 12}" x2="{left + 132}" y2="{top + 12}" '
         f'stroke="{ORANGE}" stroke-width="3"/>'
     )
     parts.append(
-        f'<text x="{left + 138}" y="{top + 16}" font-size="12" fill="{INK}">Vout</text>'
+        f'<text x="{left + 138}" y="{top + 16}" font-size="14" fill="{INK}">Vout</text>'
     )
     parts.append("</svg>")
     return "".join(parts)

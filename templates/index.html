@@ -206,7 +206,6 @@
 <section class="simulator" id="simulator" aria-labelledby="sim-heading">
   <header class="sim-header">
     <div>
-      <p class="eyebrow">Lab 04 · ngspice 47 · real solver run</p>
       <h2 id="sim-heading">Common-Emitter Amplifier Simulator</h2>
       <p class="sim-lede">
         Voltage-divider CE stage with unbypassed emitter resistor. Every number
@@ -215,7 +214,7 @@
       </p>
     </div>
     <div class="engine-chip">
-      <span class="engine-chip-label">Solver</span>
+      <span class="engine-chip-label">Lab 04 · Solver</span>
       <strong>ngspice{% if sim and sim.result.version %} {{ sim.result.version }}{% endif %}</strong>
       <span class="engine-chip-note">external process · 30 s timeout</span>
     </div>
@@ -374,7 +373,12 @@
 
       {% else %}
       <div class="sim-empty">
-        <div class="sim-empty-mark" aria-hidden="true">~</div>
+        <div class="sim-empty-mark" aria-hidden="true">
+          <svg viewBox="0 0 56 56" role="presentation">
+            <circle cx="28" cy="28" r="26" fill="#eaf6f7" stroke-width="1.5" />
+            <path d="M11 28 h7 l4 -10 l7 20 l5 -12 l3 2 h8" stroke-width="2.2" />
+          </svg>
+        </div>
         <h4>No simulation run yet</h4>
         <p>Choose an analysis, set the source amplitude and frequency, then press
           <em>Run simulation</em>. Results, plots, netlist and solver log will appear here.</p>

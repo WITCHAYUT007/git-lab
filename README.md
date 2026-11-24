@@ -158,7 +158,9 @@ docs/validation.md        ผลจริง A1–A5 และ B1–B8 + หล�
   และปรับ README นี้； โหลด ngspice แบบพกพา + ติดตั้ง Impeccable skill ตามที่อนุมัติ
 - **Impeccable:** ใช้ context/craft-floor/polish + detector ก่อน–หลัง (1280×800 และ
   390×844) แก้ contrast `status-flag` 4.4:1 → ผ่าน, ยุบ nested cards, เปลี่ยน
-  error/warning เป็น full border — ผล Detector รอบสุดท้าย `[]` ทั้ง 2 viewport
+  error/warning เป็น full border, ปรับลำดับตัวอักษร/ระยะ/header/กราฟให้เห็นชัดขึ้น —
+  ผล Detector รอบสุดท้าย `[]` ทั้ง 2 viewport
+  (ภาพก่อน–หลังอยู่ใน `docs/ui-before-*.png` และ `docs/ui-after-*.png`)
 - สิ่งที่ต้องตรวจจากสมการ Engineering Electronics: ตัวหาร `(β+1)RE` ใน Emitter/Divider,
   `VE = 0` ใน Fixed, `IC = β·IB`, `VCE = VC − VE`, และหน่วย Ω→A ที่จุดรับข้อมูล
 - **นักศึกษาต้องทวนเอง 1 กรณีบนหน้าเว็บ** ตามข้อ 06–07 ของใบงาน Lab 3 (แนะนำ A4)

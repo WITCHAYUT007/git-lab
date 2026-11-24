@@ -217,3 +217,29 @@ accessibility snapshot และ detector ของ Impeccable ตามด้�
   Lab 3 เดิมยังให้ `IC = 1.324 mA`, `VCE = 4.446 V`, `ACTIVE`, `PASS`
 - **นักศึกษาต้องทวนเอง 1 กรณีบนหน้าเว็บ** ตามข้อ 06–07 ของใบงาน Lab 3
   (แนะนำ A4: Emitter · RB=1 MΩ · RE=2000 Ω) — ยังไม่ได้ทำแทน
+
+## 14. ปรับปรุง UI ให้สวยและอ่านง่ายขึ้น (2026-11-24)
+
+รอบนี้เป็น **polish บน world เดิม** ไม่เปลี่ยนผลคำนวณ ไม่เพิ่ม dependency และไม่แตะภาษา/ข้อมูลเดิม
+
+| รายการ | ก่อน | หลัง |
+| --- | --- | --- |
+| หลักฐานภาพ | `docs/ui-before-desktop.png`, `docs/ui-before-mobile.png` | `docs/ui-after-desktop.png`, `docs/ui-after-mobile.png` |
+| Header | การ์ดขาว natural-size | แถบ ink `#123047` + ข้อความ tint `#c4dae7` → หัวข้อเป็นจุดโฟกัสชัดเจน |
+| ระบบตัวอักษร | h1 21.6px มือถือ, h2 Section 22.4px (_section ใหญ่กว่า h1_) | h1 27.2px > h2 20.8px > h3 16px; body 15.5px/1.6; `text-wrap: balance/pretty` |
+| ระยะ/ตาราง | padding เซลล์ 5px, ตัวเลข 15px | padding 8px, ตัวเลข 15px + `tabular-nums`, font-weight 700 |
+| ฟอร์ม/ปุ่ม | focus outline เดี่ยว, hover พื้นหลังอย่างเดียว | focus ring+tint, hover border, active press, disabled state, shadow มี offset+blur |
+| Simulator | มี eyebrow เหนือ h2, empty state เป็น glyph `~` | ลบ eyebrow ตาม craft floor, เปลี่ยนเป็น SVG waveform ที่เขียนขึ้นเอง, ย้าย "Lab 04" ไป chip ของ solver |
+| กราฟ | ตัวอักษร SVG 11–12px ย่อลงบนมือถือจนอ่านแทบไม่ได้ | 13–14px + `.plot { min-width: 640px }` บนมือถือ (เลื่อนในกราฟได้ แต่หน้าเว็บไม่เลื่อนแนวนอน) |
+| Browser surfaces | ใช้ค่า default หมด | Theme `::selection`, caret, scrollbar, focus-visible, underline-free control states |
+| Detector | mobile พบ `flat-type-hierarchy` 1 จุด | 1280×800 → `[]`, 390×844 → `[]` หลังปรับ h1/h2/h3 ให้มี step ≥1.25× |
+
+**วัดจาก browser จริงหลังปรับ:** contrast h1/header 13.64:1, subtitle/button meta 9.44:1,
+label/lede 5.02:1, status 5.04:1, note 7.36:1 — ผ่าน 4.5:1 ทุกจุดที่วัด;
+`scrollWidth == clientWidth` ที่ 1430 px และ 380 px; ไม่มี control เล็กกว่า 24×24 px;
+empty `Ready`, error `Error` (ไม่ผลเก่า), success `Success` ยังทำงานเหมือนเดิม;
+ชุดทดสอบ 28/28 ยังผ่าน
+
+**ข้อจำกัดเหมือนเดิม:** โมเดลใน session นี้ไม่รองรับ image input จึงไม่ได้อ่าน pixel ภาพด้วยตา
+การยืนยันใช้ Playwright DOM measurement + accessibility snapshot + detector ตามตารางด้านบน
+นอกจากนี้ยังใช้ `impeccable context` + `craft-floor` + `polish` playbook เป็นกรอบตัดสินใจ
