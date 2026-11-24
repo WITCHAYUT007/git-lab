@@ -173,5 +173,6 @@ docs/validation.md        ผลจริง A1–A5 และ B1–B8 + หล�
 - **Commit SHA · เปลี่ยนโหมดทันที:** `0bbcbed6ea3d16fc941625b0ffe0b13bb7020c6d` — `feat: submit bias mode change immediately without Apply`
 - **Commit SHA · สัญลักษณ์ Q1:** `2759cfd51b3c3a34628422cf2e25250e369f1e4c` — `fix: clarify Q1 transistor symbol in schematic`
 - **Commit SHA · Q1 ตามภาพตัวอย่าง:** `e2eaea82cb272914ba2a97c51f505a81a269e134` — `fix: redraw Q1 as circled NPN symbol without bce labels`
+- **Commit SHA · Checklist docs:** `93291fc9709b7f76b7bf058e2fb44276ab6fb054` — `docs: align submission checklist evidence and references`
 - ตรวจ SHA ของ HEAD ได้ด้วย `git rev-parse HEAD`
 - หลักฐาน A1–A5 และ B1–B8 รวมภาพหน้าจอ: [`docs/validation.md`](docs/validation.md)
