@@ -233,7 +233,7 @@ accessibility snapshot และ detector ของ Impeccable ตามด้�
 | กราฟ | ตัวอักษร SVG 11–12px ย่อลงบนมือถือจนอ่านแทบไม่ได้ | 13–14px + `.plot { min-width: 640px }` บนมือถือ (เลื่อนในกราฟได้ แต่หน้าเว็บไม่เลื่อนแนวนอน) |
 | Browser surfaces | ใช้ค่า default หมด | Theme `::selection`, caret, scrollbar, focus-visible, underline-free control states |
 | ตัวเลือกโหมด | ต้องกด **Apply mode** หลังเปลี่ยน select | เปลี่ยน select แล้ว POST ทันทีด้วย `action=mode`; ปุ่ม Apply ซ่อนเมื่อมี JS แต่ยังเป็น fallback เมื่อไม่มี JS |
-| สัญลักษณ์ Q1 | ลูกศรเอียงไม่ขนานขา emitter, เส้นบาง | ลูกศรจัดตำแหน่งให้ขนานทิศทาง emitter (วัดมุม 0.05°, ชี้ออกจาก base) และเส้น device หนา 2.4px |
+| สัญลักษณ์ Q1 | ไม่มีวงกลมตัวถัง, ขา collector/emitter ออกด้านข้าง | ทำตามภาพที่นักศึกษาส่ง: วงกลมตัวถัง, base ซ้าย / collector ขึ้น / emitter ลง, ไม่มีอักษร b/c/e; ลูกศรชี้ออกจาก base (มุม 1.46°) — หลักฐาน `docs/q1-symbol.png` |
 | Detector | mobile พบ `flat-type-hierarchy` 1 จุด | 1280×800 → `[]`, 390×844 → `[]` หลังปรับ h1/h2/h3 ให้มี step ≥1.25× |
 
 **วัดจาก browser จริงหลังปรับ:** contrast h1/header 13.64:1, subtitle/button meta 9.44:1,
@@ -241,7 +241,8 @@ label/lede 5.02:1, status 5.04:1, note 7.36:1 — ผ่าน 4.5:1 ทุก�
 `scrollWidth == clientWidth` ที่ 1430 px และ 380 px; ไม่มี control เล็กกว่า 24×24 px;
 empty `Ready`, error `Error` (ไม่ผลเก่า), success `Success` ยังทำงานเหมือนเดิม;
 เลือก Divider → Fixed → Emitter เปลี่ยนฟอร์ม/subtitle ทันทีโดยไม่กด Apply,
-กด Calculate หลังเปลี่ยนโหมดยังได้ผล `ACTIVE` `IC 1.324 mA`; สัญลักษณ์ Q1 วัดจาก DOM ว่าลูกศรขนานขา emitter และชี้ออกจาก base ทั้ง 3 โหมด, ชุดทดสอบ 28/28 ยังผ่าน
+กด Calculate หลังเปลี่ยนโหมดยังได้ผล `ACTIVE` `IC 1.324 mA`; สัญลักษณ์ Q1 ตรวจจาก DOM ว่ามีวงกลม, ไม่มีอักษร b/c/e, ลูกศรชี้ออกจาก base ทั้ง 3 โหมด
+(วัดมุม 1.46° เทียบขา emitter), ชุดทดสอบ 28/28 ยังผ่าน
 
 **ข้อจำกัดเหมือนเดิม:** โมเดลใน session นี้ไม่รองรับ image input จึงไม่ได้อ่าน pixel ภาพด้วยตา
 การยืนยันใช้ Playwright DOM measurement + accessibility snapshot + detector ตามตารางด้านบน

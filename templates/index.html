@@ -65,7 +65,7 @@
         <line class="wire" x1="70" y1="34" x2="430" y2="34"/>
         <text class="supply" x="70" y="24">+{{ display.vcc }} V</text>
         <circle class="rail-dot" cx="120" cy="34" r="3.5"/>
-        <circle class="rail-dot" cx="400" cy="34" r="3.5"/>
+        <circle class="rail-dot" cx="346" cy="34" r="3.5"/>
 
         <!-- base bias network -->
         {% if mode == "divider" %}
@@ -93,48 +93,46 @@
         {% endif %}
 
         <!-- base lead -->
-        <line class="wire" x1="120" y1="150" x2="268" y2="150"/>
+        <line class="wire" x1="120" y1="150" x2="284" y2="150"/>
         <text class="node-label" x="150" y="142">VB</text>
         <text class="current" x="196" y="142">IB →</text>
 
-        <!-- transistor -->
-        <line class="wire device" x1="284" y1="120" x2="284" y2="180"/>
-        <line class="wire device" x1="268" y1="150" x2="284" y2="150"/>
-        <line class="wire device" x1="284" y1="134" x2="346" y2="104"/>
-        <line class="wire device" x1="284" y1="166" x2="346" y2="196"/>
-        <polygon class="arrow" points="339,193 322,191 327,181"/>
-        <text class="ref" x="356" y="150">Q1</text>
-        <text class="value" x="356" y="166">β = {{ display.beta }}</text>
+        <!-- transistor: circle body, base left, collector up, emitter down -->
+        <circle class="body" cx="320" cy="150" r="58"/>
+        <line class="wire device" x1="284" y1="124" x2="284" y2="176"/>
+        <line class="wire device" x1="284" y1="132" x2="346" y2="104"/>
+        <line class="wire device" x1="284" y1="168" x2="346" y2="196"/>
+        <polygon class="arrow" points="334,191 317,189 322,179"/>
+        <text class="ref" x="388" y="140">Q1</text>
+        <text class="value" x="388" y="156">β = {{ display.beta }}</text>
         <text class="node-label" x="246" y="200">VBE = {{ display.vbe }} V</text>
 
         <!-- collector network -->
-        <line class="wire" x1="400" y1="34" x2="400" y2="52"/>
-        <rect class="part" x="392" y="52" width="16" height="38" rx="2"/>
-        <text class="value" x="424" y="66">{{ display.rc }}</text>
-        <text class="ref" x="424" y="80">RC</text>
-        <line class="wire" x1="400" y1="90" x2="400" y2="104"/>
-        <circle class="node" cx="400" cy="104" r="4"/>
-        <line class="wire" x1="346" y1="104" x2="400" y2="104"/>
-        <text class="node-label" x="410" y="100">VC</text>
-        <text class="current" x="360" y="92">IC →</text>
+        <line class="wire" x1="346" y1="34" x2="346" y2="52"/>
+        <rect class="part" x="338" y="52" width="16" height="38" rx="2"/>
+        <text class="value" x="366" y="66">{{ display.rc }}</text>
+        <text class="ref" x="366" y="80">RC</text>
+        <line class="wire" x1="346" y1="90" x2="346" y2="104"/>
+        <circle class="node" cx="346" cy="104" r="4"/>
+        <text class="node-label" x="356" y="102">VC</text>
+        <text class="current" x="356" y="118">IC →</text>
 
         <!-- emitter network -->
-        <line class="wire" x1="346" y1="196" x2="400" y2="196"/>
-        <circle class="node" cx="400" cy="196" r="4"/>
-        <text class="node-label" x="410" y="192">VE</text>
+        <circle class="node" cx="346" cy="196" r="4"/>
+        <text class="node-label" x="356" y="192">VE</text>
         {% if mode != "fixed" %}
-        <line class="wire" x1="400" y1="196" x2="400" y2="218"/>
-        <rect class="part" x="392" y="218" width="16" height="48" rx="2"/>
-        <text class="value" x="424" y="238">{{ display.re }}</text>
-        <text class="ref" x="424" y="252">RE</text>
-        <line class="wire" x1="400" y1="266" x2="400" y2="278"/>
+        <line class="wire" x1="346" y1="196" x2="346" y2="218"/>
+        <rect class="part" x="338" y="218" width="16" height="48" rx="2"/>
+        <text class="value" x="366" y="238">{{ display.re }}</text>
+        <text class="ref" x="366" y="252">RE</text>
+        <line class="wire" x1="346" y1="266" x2="346" y2="278"/>
         {% else %}
-        <line class="wire" x1="400" y1="196" x2="400" y2="278"/>
+        <line class="wire" x1="346" y1="196" x2="346" y2="278"/>
         {% endif %}
-        <line class="wire" x1="386" y1="278" x2="414" y2="278"/>
-        <line class="wire" x1="390" y1="284" x2="410" y2="284"/>
-        <line class="wire" x1="395" y1="290" x2="405" y2="290"/>
-        <text class="current" x="360" y="218">IE →</text>
+        <line class="wire" x1="332" y1="278" x2="360" y2="278"/>
+        <line class="wire" x1="336" y1="284" x2="356" y2="284"/>
+        <line class="wire" x1="341" y1="290" x2="351" y2="290"/>
+        <text class="current" x="356" y="214">IE →</text>
       </svg>
       <figcaption>{{ mode_label }} · common-emitter stage</figcaption>
     </figure>

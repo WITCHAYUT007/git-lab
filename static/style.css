@@ -301,6 +301,12 @@ button.primary:disabled {
   stroke-width: 2.4;
 }
 
+.schematic .body {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
 .schematic .part {
   stroke: var(--teal-dark);
   stroke-width: 2;
